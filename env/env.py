@@ -12,6 +12,7 @@ class Env_generator:
     def sample_n_envs(self, batch_size=32):
         envs = torch.zeros((batch_size, *self.env_shape), device=self.device, requires_grad=False)
 
+        '''
         #Adding walls to each dim
         for dof in range(1, self.config.env.dof+1):
             if dof != 1:
@@ -29,5 +30,6 @@ class Env_generator:
 
             if dof != 1:
                 envs = envs.transpose(dof, 1)
+        '''
 
         return envs

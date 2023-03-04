@@ -1,0 +1,2 @@
+- common.device=cpu
+- env.dof=3

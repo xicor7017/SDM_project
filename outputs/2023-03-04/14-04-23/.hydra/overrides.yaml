@@ -1,0 +1,2 @@
+- common.device=cuda
+- env.dof=2

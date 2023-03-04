@@ -10,6 +10,7 @@ def main(cfg: DictConfig):
     
     from mae.mae import MAE
     mae = MAE(Env_generator.sample_n_envs, cfg)
+    mae.start_training()
 
 if __name__ == "__main__":
     main()
