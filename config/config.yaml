@@ -1,4 +1,9 @@
 mode: Pretrain
 
 common:
-  seed: 0
+  seed: 1
+  device: cpu
+
+env:
+  dof_size: 32
+  dof: 3

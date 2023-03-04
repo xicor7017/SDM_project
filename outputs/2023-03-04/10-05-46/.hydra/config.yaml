@@ -1,0 +1,6 @@
+mode: Pretrain
+common:
+  seed: 0
+env:
+  dof_size: 32
+  dof: 3
