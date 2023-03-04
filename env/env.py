@@ -17,10 +17,10 @@ class Env_generator:
             if dof != 1:
                 envs = envs.transpose(1, dof)
 
-            wall = torch.ones((batch_size, *self.env_shape[1:]))
-            random_wall_index = torch.randint(low=0, high=self.config.env.dof_size, size=(batch_size,))
+            wall = torch.ones((batch_size, *self.env_shape[1:]), device=self.device, requires_grad=False)
+            random_wall_index = torch.randint(low=0, high=self.config.env.dof_size, size=(batch_size,), device=self.device, requires_grad=False)
 
-            random_window_index = torch.randint(low=0, high=self.config.env.dof_size//2+1, size=(batch_size,))
+            random_window_index = torch.randint(low=0, high=self.config.env.dof_size//2+1, size=(batch_size,), device=self.device, requires_grad=False)
             
             for window_index in range(self.window_size):
                 wall[torch.arange(batch_size), random_window_index+window_index] = 0.0
@@ -30,5 +30,4 @@ class Env_generator:
             if dof != 1:
                 envs = envs.transpose(dof, 1)
 
-        
         return envs

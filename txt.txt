@@ -1,6 +1,6 @@
-Create env.
-Main and config
-Torch env class
+Create env.                         DONE
+Main and config                     DONE
+Torch env class                     DONE
 Masked autoencoder architecture
 autoencoder training
 GPT architecture

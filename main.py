@@ -7,11 +7,9 @@ def main(cfg: DictConfig):
     
     from env.env import Env_generator
     Env_generator = Env_generator(cfg)
-    envs = Env_generator.sample_n_envs()
-
-    print("Got the envs")
-    print(envs.shape)
-
+    
+    from mae.mae import MAE
+    mae = MAE(Env_generator.sample_n_envs, cfg)
 
 if __name__ == "__main__":
     main()
