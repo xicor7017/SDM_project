@@ -1,4 +1,4 @@
-mode: Pretrain
+task: Pretrain_encoder
 
 common:
   seed: 1
@@ -8,10 +8,5 @@ env:
   dof_size: 16
   dof: 2
 
-encoder:
-  lr: 1e-4
-  batch_size: 4
-  training_iterations: 100000
-  logdir: pretrained_encoders/
-  run_name: temp
-  mask_ratio: 0.50
+defaults:
+  - encoder: mae

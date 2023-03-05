@@ -1,10 +1,4 @@
-Create env.                         DONE
-Main and config                     DONE
-Torch env class                     DONE
-Masked autoencoder architecture
-autoencoder training
-GPT architecture
-
-
--- Mask ratio
--- Network size
+Refactor encoder
+Check parameters
+feedforward predictor
+gpt_predictor
