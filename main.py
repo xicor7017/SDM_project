@@ -12,7 +12,12 @@ def main(cfg: DictConfig):
         encoder.start_training()
 
     elif cfg.task.lower() == "train":
-        
+        from encoders.encoder import Encoder
+        from decoders.decoder import Decoder
+
+        encoder = Encoder(cfg).load()
+        decoder = Decoder(cfg, encoder, Env_generator)
+        decoder.start_training()
 
     else:
         print("Task ill-defined")

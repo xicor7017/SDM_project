@@ -1,4 +1,4 @@
-arch: mae
+arch: cnn
 lr: 1e-4
 batch_size: 4
 training_iterations: 100000

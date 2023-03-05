@@ -10,3 +10,4 @@ env:
 
 defaults:
   - encoder: mae
+  - decoder: ff

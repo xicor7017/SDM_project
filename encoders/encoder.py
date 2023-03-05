@@ -7,16 +7,13 @@ from tqdm import tqdm
 from torch.utils.tensorboard import SummaryWriter
 
 class Encoder:
-    def __init__(self, config, envs_generator):
-        self.config = config
+    def __init__(self, config, envs_generator=None):
+        self.config         = config
+        self.device         = torch.device(self.config.common.device)
+        self.log_location   = self.config.encoder.logdir + self.config.encoder.run_name
         self.envs_generator = envs_generator
-        self.log_location = self.config.encoder.logdir + self.config.encoder.run_name
-        
-        self.model, self.optimizer = self.get_encoder_n_optimizer()
 
-    def get_encoder_n_optimizer(self):
-        self.device = torch.device(self.config.common.device)
-
+    def get_encoder(self):
         if self.config.encoder.arch == "mae":
             #Setting encoding parameters to adapt the model to n-dof envs
             if self.config.env.dof % 2: in_chans = 2
@@ -36,8 +33,7 @@ class Encoder:
             from encoders.CNN import CNN
             model = CNN(self.config.env.dof, self.config.env.dof_size).to(self.device)
 
-        optimizer = torch.optim.AdamW(model.parameters(), lr=self.config.encoder.lr, betas=(0.9, 0.95))
-        return model, optimizer
+        return model
 
     def perform_iteration(self, batch_size, eval=False):
         self.model.train()
@@ -53,6 +49,8 @@ class Encoder:
         return loss
 
     def init_training(self):
+        self.model     = self.get_encoder()
+        self.optimizer = torch.optim.AdamW(self.model.parameters(), lr=self.config.encoder.lr, betas=(0.9, 0.95))
         self.logger = SummaryWriter(log_dir=self.log_location)
 
     def log(self, training_loss, testing_loss, itr):
@@ -61,10 +59,11 @@ class Encoder:
         self.save()
 
     def save(self):
-        torch.save(self.model.state_dict(), self.log_location + "model.state_dict")
+        torch.save(self.model.state_dict(), self.log_location + "/model.state_dict")
 
     def load(self):
-        pass
+        self.model = self.get_encoder()
+        self.model.load_state_dict(torch.load(self.log_location + "/model.state_dict"))
 
     def start_training(self):
         self.init_training()
