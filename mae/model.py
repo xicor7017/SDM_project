@@ -15,8 +15,8 @@ class MaskedAutoencoderViT(nn.Module):
     """ Masked Autoencoder with VisionTransformer backbone
     """
     def __init__(self, img_size=224, patch_size=16, in_chans=3,
-                 embed_dim=1024, depth=24, num_heads=16,
-                 decoder_embed_dim=512, decoder_depth=8, decoder_num_heads=16,
+                 embed_dim=1024, depth=6, num_heads=16,
+                 decoder_embed_dim=512, decoder_depth=3, decoder_num_heads=16,
                  mlp_ratio=4., norm_layer=nn.LayerNorm, norm_pix_loss=False):
         super().__init__()
 
@@ -201,7 +201,11 @@ class MaskedAutoencoderViT(nn.Module):
         mask: [N, L], 0 is keep, 1 is remove, 
         """
 
-        target = self.patchify(imgs)
+        #target = self.patchify(imgs)
+
+
+        target = imgs.view_as(pred)
+
 
         if self.norm_pix_loss:
             mean = target.mean(dim=-1, keepdim=True)
@@ -218,5 +222,6 @@ class MaskedAutoencoderViT(nn.Module):
         imgs = imgs.reshape((imgs.shape[0], self.in_chans, self.img_size, self.img_size))
         latent, mask, ids_restore = self.forward_encoder(imgs, mask_ratio)
         pred = self.forward_decoder(latent, ids_restore)  # [N, L, p*p*3]
+
         loss = self.forward_loss(imgs, pred, mask)
         return loss, pred, mask

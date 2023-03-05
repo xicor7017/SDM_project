@@ -4,3 +4,7 @@ Torch env class                     DONE
 Masked autoencoder architecture
 autoencoder training
 GPT architecture
+
+
+-- Mask ratio
+-- Network size

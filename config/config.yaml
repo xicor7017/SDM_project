@@ -5,12 +5,13 @@ common:
   device: cuda
 
 env:
-  dof_size: 32
+  dof_size: 16
   dof: 2
 
 encoder:
-  lr: 1e-3
-  batch_size: 32
-  training_iterations: 1000000
+  lr: 1e-4
+  batch_size: 4
+  training_iterations: 100000
   logdir: pretrained_encoders/
-  mask_ratio: 0.2
+  run_name: temp
+  mask_ratio: 0.50
