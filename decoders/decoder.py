@@ -15,13 +15,21 @@ class Decoder:
         self.log_location = self.config.encoder.logdir + self.config.decoder.run_name
 
     def init_training(self):
+        self.model = self.get_decoder()
+        self.optimizer = torch.optim.Adam(self.model.parameters(), lr=self.config.decoder.lr)
         self.logger = SummaryWriter(log_dir=self.log_location)
 
+    def get_decoder(self):
+        if self.config.decoder.arch == "ff":
+            from decoders.ff import FF
+            model = FF(10,20)
+        else:
+            print("Decoder arch not defined")
+            exit()
+
+        return model
+
     def perform_iteration(self, batch_size, eval=False):
-
-        print("Inside eval")
-        time.sleep(1000)
-
         self.model.train()
         if eval: self.model.eval()
 
@@ -37,6 +45,9 @@ class Decoder:
 
     def start_training(self):
         self.init_training()
+
+        print("INIT DONE")
+        time.sleep(1000)
 
         for itr in tqdm(range(1, self.config.decoder.training_iterations)):
             training_loss  = self.perform_iteration(self.config.decoder.batch_size)
