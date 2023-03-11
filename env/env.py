@@ -33,29 +33,69 @@ class Env_generator:
 
         return envs
 
-    def sample_action(self, env, actions, position):
-        pass
+    def sample_action(self, envs, position, last_action=None):
+        feasible_actions = False
 
-    def sampled_trajectory(envs, start_pos):
-        pass
+        if last_action is not None:
+            inverse_action = -1 * last_action   #To make sure we dont backtraj trajectory through random actions
+
+        while not feasible_actions:
+            
+            if last_action is None:
+                random_actions = torch.randint(low=-1, high=2, size=(envs.shape[0], self.config.env.dof))
+            else:
+                random_actions = torch.randint(low=-1, high=2, size=(envs.shape[0], self.config.env.dof))
+                while (random_actions == inverse_action).all(1).any():
+                    random_actions = torch.randint(low=-1, high=2, size=(envs.shape[0], self.config.env.dof))
+                
+            expected_positions = position + random_actions
+            feasible_actions = self.check_position_feasibility(envs, expected_positions)
+
+        return random_actions, expected_positions
+
+
+    def sample_trajectory(self, envs, start_pos, traj_len):
+        positions = []
+        actions = []
+
+        position = start_pos
+        action = None
+        for _ in range(traj_len):
+            action, position = self.sample_action(envs, position, last_action=action)
+            actions.append(action)
+            positions.append(position)
+
+        actions = torch.stack(actions)
+        positions = torch.stack(positions)
+
+        return actions, positions
+
+    def check_position_feasibility(self, envs, positions):
+        # Check for boundary violations
+        clipped_positions = torch.clip(positions, min=0, max=self.config.env.dof_size-1)
+
+        if not (clipped_positions==positions).all():
+            return False
+        else:
+            # Check for wall collisions
+            env_ids = torch.tensor([range(envs.shape[0])]).int()
+            idx = torch.cat((env_ids.T,positions), 1)
+            env_state = torch.stack([envs[i,j,k] for i,j,k in idx])
+            if not (env_state == 0.0).all():    # The positions collide with walls
+                return False
+    
+        return True
 
     def sample_positions(self, envs):
         positions_found = False
         while not positions_found:
-            idx = torch.tensor([range(envs.shape[0])]).int()
-            positions = torch.randint(low=0, high=self.config.env.dof_size, size=(envs.shape[0], 2))
-            x = torch.cat((idx.T,positions), 1)
-            env_state = torch.stack([envs[i,j,k] for i,j,k in x])
-
-            if (env_state == 0.0).all():
-                positions_found=True
-
-        return positions
-
+            random_positions = torch.randint(low=0, high=self.config.env.dof_size, size=(envs.shape[0], 2))
+            positions_found = self.check_position_feasibility(envs, random_positions)
+        return random_positions
 
     def sample_env_n_trajs(self, batch_size, traj_len):
         envs = self.sample_n_envs(batch_size)
-
         start_pos = self.sample_positions(envs)
-        sampled_trajectory = self.sampled_trajectory(envs, start_pos)
+        sampled_actions, sampled_trajectory = self.sample_trajectory(envs, start_pos, traj_len)
 
+        return sampled_actions, sampled_trajectory
