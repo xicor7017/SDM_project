@@ -123,6 +123,7 @@ class MaskedAutoencoderViT(nn.Module):
         x: [N, L, D], sequence
         """
         N, L, D = x.shape  # batch, length, dim
+
         len_keep = int(L * (1 - mask_ratio))
         
         noise = torch.rand(N, L, device=x.device)  # noise in [0, 1]

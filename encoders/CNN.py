@@ -1,6 +1,6 @@
 import torch
 import torch.nn as nn
-from convNd import convNd
+from encoders.convNd import convNd
 
 class CNN(nn.Module):
     def __init__(self, dof, dof_size, bottleneck_dim=512):

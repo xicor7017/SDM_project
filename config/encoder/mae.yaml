@@ -1,7 +1,7 @@
 arch: mae
 lr: 1e-4
 batch_size: 4
-training_iterations: 100000
+training_iterations: 1000000
 logdir: pretrained_encoders/
 run_name: temp
 mask_ratio: 0.50

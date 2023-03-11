@@ -7,6 +7,8 @@ common:
 env:
   dof_size: 16
   dof: 2
+  action_size: 2
+  walled: True
 
 defaults:
   - encoder: mae

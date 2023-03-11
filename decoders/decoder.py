@@ -11,7 +11,6 @@ class Decoder:
         self.config = config
         self.encoder = encoder
         self.env_generator = env_generator
-
         self.log_location = self.config.encoder.logdir + self.config.decoder.run_name
 
     def init_training(self):
@@ -22,7 +21,10 @@ class Decoder:
     def get_decoder(self):
         if self.config.decoder.arch == "ff":
             from decoders.ff import FF
-            model = FF(10,20)
+            state_size = 2
+            env_size   = self.config.env.dof_size ** self.config.env.dof
+
+            model      = FF(in_dim=env_size + state_size + state_size, output_dims=self.config.env.action_size)
         else:
             print("Decoder arch not defined")
             exit()
@@ -33,7 +35,7 @@ class Decoder:
         self.model.train()
         if eval: self.model.eval()
 
-        sample_envs = self.envs_generator(batch_size)
+        sample_envs = self.env_generator.sample_env_n_trajs(batch_size, 2)
 
         loss, pred, mask = self.model(sample_envs, mask_ratio=self.config.encoder.mask_ratio)
 
@@ -45,9 +47,6 @@ class Decoder:
 
     def start_training(self):
         self.init_training()
-
-        print("INIT DONE")
-        time.sleep(1000)
 
         for itr in tqdm(range(1, self.config.decoder.training_iterations)):
             training_loss  = self.perform_iteration(self.config.decoder.batch_size)

@@ -1,3 +1,4 @@
+import time
 import hydra
 from omegaconf import DictConfig
 
@@ -17,6 +18,7 @@ def main(cfg: DictConfig):
 
         encoder = Encoder(cfg).load()
         decoder = Decoder(cfg, encoder, Env_generator)
+
         decoder.start_training()
 
     else:
