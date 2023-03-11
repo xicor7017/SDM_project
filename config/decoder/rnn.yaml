@@ -1,8 +1,9 @@
-arch: ff
+arch: rnn
 lr: 1e-4
-batch_size: 4
+batch_size: 8
 training_iterations: 100000
 logdir: pretrained_decoders/
 run_name: temp
-traj_len: 7
+max_traj_len: 2
 hidden_dims: 256
+entropy_loss: False

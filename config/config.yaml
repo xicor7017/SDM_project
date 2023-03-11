@@ -2,7 +2,7 @@ task: Pretrain_encoder
 
 common:
   seed: 1
-  device: cuda
+  device: cuda:0
 
 env:
   dof_size: 16

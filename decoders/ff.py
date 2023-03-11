@@ -3,15 +3,15 @@ import torch
 import torch.nn as nn
 
 class FF(nn.Module):
-    def __init__(self, in_dim, output_dims):
+    def __init__(self, input_dims, output_dim, config):
         super(FF, self).__init__()
 
         self.ff = nn.Sequential(
-                                        nn.Linear(in_dim, 1024),
+                                        nn.Linear(input_dims, config.decoder.hidden_dims),
                                         nn.Tanh(),
-                                        nn.Linear(1024, 1024),
+                                        nn.Linear(config.decoder.hidden_dims, config.decoder.hidden_dims),
                                         nn.Tanh(),
-                                        nn.Linear(1024, output_dims)
+                                        nn.Linear(config.decoder.hidden_dims, output_dim)
                                     )
 
     def forward_loss(self, in_data, pred_data):

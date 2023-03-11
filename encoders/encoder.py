@@ -72,6 +72,7 @@ class Encoder:
     def load(self):
         self.model = self.get_encoder()
         self.model.load_state_dict(torch.load(self.log_location + "/model.state_dict"))
+        return self.model
 
     def start_training(self):
         self.init_training()
